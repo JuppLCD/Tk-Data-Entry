@@ -1,116 +1,174 @@
-import tkinter
-from tkinter import ttk
-from tkinter import messagebox
+from tkinter import Tk, messagebox, Frame, LabelFrame, Button
+
+from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox
 
 
-def enter_data():
-    accepted = accept_var.get()
+class MainFrame(Frame):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-    if accepted == "Accepted":
+        self.pack()
+
+        self.user_info_frame = UserInfoFrame(master=self)
+        self.courses_frame = CoursesFrame(master=self)
+        self.accept_terms_frame = TermsAndConditions(master=self)
+
+        # Button
+        button = Button(self, text="Enter data", command=self.enter_data)
+        button.grid(row=3, column=0, sticky="news", padx=20, pady=10)
+
+    def enter_data(self):
+        is_accepted = self.accept_terms_frame.is_accepted()
+
+        if not is_accepted:
+            messagebox.showwarning(
+                title="Error",
+                message="You have not accepted the terms"
+            )
+
+            return
+
         # User info
-        firstname = first_name_entry.get()
-        lastname = last_name_entry.get()
+        user_info = self.user_info_frame.get_user_info()
+        firstname = user_info["firstname"]
+        lastname = user_info["lastname"]
 
-        if firstname and lastname:
-            title = title_combobox.get()
-            age = age_spinbox.get()
-            nationality = nationality_combobox.get()
-
-            # Course info
-            registration_status = reg_status_var.get()
-            numcourses = numcourses_spinbox.get()
-            numsemesters = numsemesters_spinbox.get()
-
-            print("First name: ", firstname, "Last name: ", lastname)
-            print("Title: ", title, "Age: ", age, "Nationality: ", nationality)
-            print("# Courses: ", numcourses, "# Semesters: ", numsemesters)
-            print("Registration status", registration_status)
-            print("------------------------------------------")
-        else:
+        if firstname.strip() == "" or lastname.strip() == "":
             messagebox.showwarning(
                 title="Error", message="First name and last name are required.")
-    else:
-        messagebox.showwarning(
-            title="Error", message="You have not accepted the terms")
 
+            return
 
-window = tkinter.Tk()
-window.title("Data Entry Form")
+        title = user_info["title"]
+        age = user_info["age"]
+        nationality = user_info["nationality"]
 
-frame = tkinter.Frame(window)
-frame.pack()
+        # Course info
+        course_info = self.courses_frame.get_course_info()
+        registration_status = course_info["registration_status"]
+        numcourses = course_info["numcourses"]
+        numsemesters = course_info["numsemesters"]
+
+        print("First name: ", firstname, "Last name: ", lastname)
+        print("Title: ", title, "Age: ", age,
+              "Nationality: ", nationality)
+        print("# Courses: ", numcourses, "# Semesters: ", numsemesters)
+        print("Registration status", registration_status)
+        print("------------------------------------------")
+
 
 # Saving User Info
-user_info_frame = tkinter.LabelFrame(frame, text="User Information")
-user_info_frame.grid(row=0, column=0, padx=20, pady=10)
+class UserInfoFrame(LabelFrame):
+    def __init__(self, **kwargs):
+        super().__init__(text="User Information", **kwargs)
 
-first_name_label = tkinter.Label(user_info_frame, text="First Name")
-first_name_label.grid(row=0, column=0)
-last_name_label = tkinter.Label(user_info_frame, text="Last Name")
-last_name_label.grid(row=0, column=1)
+        self.grid(row=0, column=0, padx=20, pady=10)
 
-first_name_entry = tkinter.Entry(user_info_frame)
-last_name_entry = tkinter.Entry(user_info_frame)
-first_name_entry.grid(row=1, column=0)
-last_name_entry.grid(row=1, column=1)
+        self.first_name_input = MyInputText(
+            self, text="First Name", position=(0, 0))
+        self.last_name_input = MyInputText(
+            self, text="Last Name", position=(0, 1))
 
-title_label = tkinter.Label(user_info_frame, text="Title")
-title_combobox = ttk.Combobox(user_info_frame, values=[
-                              "", "Mr.", "Ms.", "Dr."])
-title_label.grid(row=0, column=2)
-title_combobox.grid(row=1, column=2)
+        self.title_select = MyInputSelect(
+            master=self,
+            text="Title",
+            position=(0, 2),
+            options=("", "Mr.", "Ms.", "Dr.")
+        )
 
-age_label = tkinter.Label(user_info_frame, text="Age")
-age_spinbox = tkinter.Spinbox(user_info_frame, from_=18, to=110)
-age_label.grid(row=2, column=0)
-age_spinbox.grid(row=3, column=0)
+        self.age_input = MyInputNumber(
+            master=self,
+            text="Age",
+            position=(2, 0),
+            rangeInput=(18, 110)
+        )
 
-nationality_label = tkinter.Label(user_info_frame, text="Nationality")
-nationality_combobox = ttk.Combobox(user_info_frame, values=[
-                                    "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"])
-nationality_label.grid(row=2, column=1)
-nationality_combobox.grid(row=3, column=1)
+        self.nationality_select = MyInputSelect(
+            master=self,
+            text="Nationality",
+            position=(2, 1),
+            options=(
+                "", "Africa", "Antarctica", "Asia", "Europe", "North America", "Oceania", "South America"
+            )
+        )
 
-for widget in user_info_frame.winfo_children():
-    widget.grid_configure(padx=10, pady=5)
+    def get_user_info(self) -> dict[str, str | int]:
+        user_info = {
+            "firstname": self.first_name_input.get_input_value(),
+            "lastname": self.last_name_input.get_input_value(),
+            "title": self.title_select.get_input_value(),
+            "age": self.age_input.get_input_value(),
+            "nationality": self.nationality_select.get_input_value(),
+        }
+
+        return user_info
+
 
 # Saving Course Info
-courses_frame = tkinter.LabelFrame(frame)
-courses_frame.grid(row=1, column=0, sticky="news", padx=20, pady=10)
+class CoursesFrame(LabelFrame):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-registered_label = tkinter.Label(courses_frame, text="Registration Status")
+        self.grid(row=1, column=0, sticky="news", padx=20, pady=10)
 
-reg_status_var = tkinter.StringVar(value="Not Registered")
-registered_check = tkinter.Checkbutton(courses_frame, text="Currently Registered",
-                                       variable=reg_status_var, onvalue="Registered", offvalue="Not registered")
+        self.reg_status_input = MyInputCheckBox(
+            self,
+            label_text="Registration Status",
+            text_check_box="Currently Registered",
+            onvalue="Registered",
+            offvalue="Not registered",
+            position=(0, 0)
+        )
 
-registered_label.grid(row=0, column=0)
-registered_check.grid(row=1, column=0)
+        self.numcourses_input = MyInputNumber(
+            master=self,
+            text="# Completed Courses",
+            position=(0, 1),
+        )
 
-numcourses_label = tkinter.Label(courses_frame, text="# Completed Courses")
-numcourses_spinbox = tkinter.Spinbox(courses_frame, from_=0, to='infinity')
-numcourses_label.grid(row=0, column=1)
-numcourses_spinbox.grid(row=1, column=1)
+        self.numsemesters_input = MyInputNumber(
+            master=self,
+            text="# Semesters",
+            position=(0, 2),
+        )
 
-numsemesters_label = tkinter.Label(courses_frame, text="# Semesters")
-numsemesters_spinbox = tkinter.Spinbox(courses_frame, from_=0, to="infinity")
-numsemesters_label.grid(row=0, column=2)
-numsemesters_spinbox.grid(row=1, column=2)
+    def get_course_info(self) -> dict[str, str | int]:
+        course_info = {
+            "registration_status": self.reg_status_input.get_input_value(),
+            "numcourses": self.numcourses_input.get_input_value(),
+            "numsemesters": self.numsemesters_input.get_input_value()
+        }
 
-for widget in courses_frame.winfo_children():
-    widget.grid_configure(padx=10, pady=5)
+        return course_info
+
 
 # Accept terms
-terms_frame = tkinter.LabelFrame(frame, text="Terms & Conditions")
-terms_frame.grid(row=2, column=0, sticky="news", padx=20, pady=10)
+class TermsAndConditions(LabelFrame):
+    def __init__(self, **kwargs):
+        super().__init__(text="Terms & Conditions", **kwargs)
 
-accept_var = tkinter.StringVar(value="Not Accepted")
-terms_check = tkinter.Checkbutton(terms_frame, text="I accept the terms and conditions.",
-                                  variable=accept_var, onvalue="Accepted", offvalue="Not Accepted")
-terms_check.grid(row=0, column=0)
+        self.grid(row=2, column=0, sticky="news", padx=20, pady=10)
 
-# Button
-button = tkinter.Button(frame, text="Enter data", command=enter_data)
-button.grid(row=3, column=0, sticky="news", padx=20, pady=10)
+        self.accept_terms_input = MyInputCheckBox(
+            self,
+            text_check_box="I accept the terms and conditions.",
+            onvalue="Accepted",
+            offvalue="Not Accepted",
+            position=(0, 0)
+        )
 
-window.mainloop()
+    def is_accepted(self) -> bool:
+        accepted = self.accept_terms_input.get_input_value()
+        return accepted == "Accepted"
+
+
+class App:
+    def __init__(self):
+        self.window = Tk()
+        self.window.title("Data Entry Form")
+
+        MainFrame(master=self.window)
+
+
+if __name__ == "__main__":
+    App().window.mainloop()
