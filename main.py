@@ -1,13 +1,18 @@
 from tkinter import Tk, messagebox, Frame, LabelFrame, Button
 
 from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox
+from utils.entities import User
+from models.model_abstract import UserModelAbstract
+from models.excel import UserModel
 
 
 class MainFrame(Frame):
-    def __init__(self, **kwargs):
+    def __init__(self, userModel: UserModelAbstract, **kwargs):
         super().__init__(**kwargs)
 
         self.pack()
+
+        self.userModel = userModel
 
         self.user_info_frame = UserInfoFrame(master=self)
         self.courses_frame = CoursesFrame(master=self)
@@ -39,22 +44,29 @@ class MainFrame(Frame):
 
             return
 
-        title = user_info["title"]
-        age = user_info["age"]
-        nationality = user_info["nationality"]
-
         # Course info
         course_info = self.courses_frame.get_course_info()
-        registration_status = course_info["registration_status"]
-        numcourses = course_info["numcourses"]
-        numsemesters = course_info["numsemesters"]
 
-        print("First name: ", firstname, "Last name: ", lastname)
-        print("Title: ", title, "Age: ", age,
-              "Nationality: ", nationality)
-        print("# Courses: ", numcourses, "# Semesters: ", numsemesters)
-        print("Registration status", registration_status)
+        user = User(
+            firstname,
+            lastname,
+            title=user_info["title"],
+            age=user_info["age"],
+            nationality=user_info["nationality"],
+            numcourses=course_info["numcourses"],
+            numsemesters=course_info["numsemesters"],
+            registration_status=course_info["registration_status"]
+        )
+
+        print("First name: ", user.firstname, "Last name: ", user.lastname)
+        print("Title: ", user.title, "Age: ", user.age,
+              "Nationality: ", user.nationality)
+        print("# Courses: ", user.numcourses,
+              "# Semesters: ", user.numsemesters)
+        print("Registration status", user.registration_status)
         print("------------------------------------------")
+
+        self.userModel.store(user)
 
 
 # Saving User Info
@@ -163,12 +175,15 @@ class TermsAndConditions(LabelFrame):
 
 
 class App:
-    def __init__(self):
+    def __init__(self, userModel: UserModelAbstract):
         self.window = Tk()
         self.window.title("Data Entry Form")
 
-        MainFrame(master=self.window)
+        MainFrame(master=self.window, userModel=userModel)
 
 
 if __name__ == "__main__":
-    App().window.mainloop()
+    # Excel DB
+    userModel = UserModel()
+
+    App(userModel=userModel).window.mainloop()
