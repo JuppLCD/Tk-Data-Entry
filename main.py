@@ -1,13 +1,14 @@
 from tkinter import Tk, messagebox, Frame, LabelFrame, Button
 
+from models.model_abstract import ModelAbstract
+from models.excel.user import UserModel
+
 from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox
 from utils.entities import User
-from models.model_abstract import UserModelAbstract
-from models.excel import UserModel
 
 
 class MainFrame(Frame):
-    def __init__(self, userModel: UserModelAbstract, **kwargs):
+    def __init__(self, userModel: ModelAbstract, **kwargs):
         super().__init__(**kwargs)
 
         self.pack()
@@ -175,7 +176,7 @@ class TermsAndConditions(LabelFrame):
 
 
 class App:
-    def __init__(self, userModel: UserModelAbstract):
+    def __init__(self, userModel: ModelAbstract):
         self.window = Tk()
         self.window.title("Data Entry Form")
 

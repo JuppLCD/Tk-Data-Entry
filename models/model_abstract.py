@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 
-from utils.entities import User
 
-
-class UserModelAbstract(ABC):
+class ModelAbstract(ABC):
 
     # @abstractmethod
     # def getAll(self):
@@ -14,7 +12,7 @@ class UserModelAbstract(ABC):
     #     pass
 
     @abstractmethod
-    def store(self, data: User):
+    def store(self, data):
         pass
 
     # @abstractmethod
