@@ -1,7 +1,9 @@
 from tkinter import Tk, messagebox, Frame, LabelFrame, Button
 
 from models.model_abstract import ModelAbstract
-from models.excel.user import UserModel
+# from models.excel.user import UserModel
+from models.sqlite.user import UserModel
+
 
 from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox
 from utils.entities import User
@@ -184,7 +186,6 @@ class App:
 
 
 if __name__ == "__main__":
-    # Excel DB
     userModel = UserModel()
 
     App(userModel=userModel).window.mainloop()
