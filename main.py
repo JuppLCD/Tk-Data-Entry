@@ -1,4 +1,4 @@
-from tkinter import Tk, messagebox, Frame, LabelFrame, Button
+from tkinter import Tk, messagebox, Frame, LabelFrame, Button, Menu
 
 from models.model_abstract import ModelAbstract
 # from models.excel.user import UserModel
@@ -9,7 +9,7 @@ from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputChec
 from utils.entities import User
 
 
-class MainFrame(Frame):
+class StudentFormView(Frame):
     def __init__(self, userModel: ModelAbstract, **kwargs):
         super().__init__(**kwargs)
 
@@ -61,13 +61,7 @@ class MainFrame(Frame):
             registration_status=course_info["registration_status"]
         )
 
-        print("First name: ", user.firstname, "Last name: ", user.lastname)
-        print("Title: ", user.title, "Age: ", user.age,
-              "Nationality: ", user.nationality)
-        print("# Courses: ", user.numcourses,
-              "# Semesters: ", user.numsemesters)
-        print("Registration status", user.registration_status)
-        print("------------------------------------------")
+        print("The data has been added correctly")
 
         self.userModel.store(user)
 
@@ -182,7 +176,64 @@ class App:
         self.window = Tk()
         self.window.title("Data Entry Form")
 
-        MainFrame(master=self.window, userModel=userModel)
+        # Main window size
+        window_width = 850
+        window_height = 400
+
+        # User screen size
+        screen_width = self.window.winfo_screenwidth()
+        screen_height = self.window.winfo_screenheight()
+
+        # Obtaining the coordinate in which the left point of the screen is going to be placed (we want to center it)
+        x = int((screen_width/2) - (window_width/2))
+        y = int((screen_height/2) - (window_height/2) - 30)
+        # -30 for the taskbar at the bottom
+
+        # Setting the width, height of the window and the coordinates in which it will be located
+        self.window.geometry(
+            f"{window_width}x{window_height}+{x}+{y}"
+        )
+
+        self.main_frame = Frame(self.window).pack()
+
+        self.userModel = userModel
+
+        self.menu()
+
+        self.default_view()
+
+    def menu(self):
+        menu_bar = Menu(self.window)
+        self.window.config(menu=menu_bar)
+
+        # --------------- Application menu
+        home_menu = Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label='Home', menu=home_menu)
+
+        menu_bar.add_command(
+            label='Students', command=self.students_table_view)
+
+        # Example menus
+        menu_bar.add_command(label='Setting', command=lambda: print("Setting"))
+        menu_bar.add_command(label='Help', command=lambda: print("Help"))
+
+        # --------------- Submenus
+        home_menu.add_command(label='Opcion 1')
+        home_menu.add_command(label='Opcion 2')
+        home_menu.add_command(label='Close', command=self.window.destroy)
+
+    def default_view(self):
+        self.current_view = StudentFormView(
+            master=self.main_frame, userModel=self.userModel)
+
+    def students_table_view(self):
+        self.current_view = self.current_view.destroy()
+
+        self.current_view = Frame(self.main_frame)
+        self.current_view.pack()
+
+        Button(self.current_view, text="HELLO!!!! The StudentFormView was destroyed",
+               command=lambda: print("DESTROYED")).pack()
 
 
 if __name__ == "__main__":
