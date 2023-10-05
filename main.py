@@ -5,8 +5,30 @@ from models.model_abstract import ModelAbstract
 from models.sqlite.user import UserModel
 
 
-from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox
+from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox, MyTable
 from utils.entities import User
+
+
+class StudentTableView(Frame):
+    def __init__(self, userModel: ModelAbstract, **kwargs):
+        super().__init__(**kwargs)
+
+        self.pack()
+
+        self.userModel = userModel
+
+        table_cols = ("id", "firstname", "lastname", "title", "age", "nationality",
+                      "registration_status", "num_courses", "num_semesters")
+
+        cols_width = (30, 100, 100, 70, 50, 120, 200, 140, 160)
+
+        self.student_table = MyTable(
+            self,
+            cols=table_cols,
+            cols_text=tuple(
+                map(lambda col_text: col_text.upper(), table_cols)),
+            cols_width=cols_width
+        )
 
 
 class StudentFormView(Frame):
@@ -177,8 +199,8 @@ class App:
         self.window.title("Data Entry Form")
 
         # Main window size
-        window_width = 850
-        window_height = 400
+        window_width = 900
+        window_height = 500
 
         # User screen size
         screen_width = self.window.winfo_screenwidth()
@@ -197,6 +219,8 @@ class App:
         self.main_frame = Frame(self.window).pack()
 
         self.userModel = userModel
+
+        self.current_view = None
 
         self.menu()
 
@@ -218,22 +242,26 @@ class App:
         menu_bar.add_command(label='Help', command=lambda: print("Help"))
 
         # --------------- Submenus
-        home_menu.add_command(label='Opcion 1')
-        home_menu.add_command(label='Opcion 2')
+        home_menu.add_command(label='Student Form', command=self.default_view)
+        home_menu.add_command(
+            label='Opcion 1', command=lambda: print("Opcion 1"))
         home_menu.add_command(label='Close', command=self.window.destroy)
 
     def default_view(self):
+        self.clear_current_view()
+
         self.current_view = StudentFormView(
             master=self.main_frame, userModel=self.userModel)
 
     def students_table_view(self):
-        self.current_view = self.current_view.destroy()
+        self.clear_current_view()
 
-        self.current_view = Frame(self.main_frame)
-        self.current_view.pack()
+        self.current_view = StudentTableView(
+            master=self.main_frame, userModel=self.userModel)
 
-        Button(self.current_view, text="HELLO!!!! The StudentFormView was destroyed",
-               command=lambda: print("DESTROYED")).pack()
+    def clear_current_view(self):
+        if self.current_view != None:
+            self.current_view = self.current_view.destroy()
 
 
 if __name__ == "__main__":
