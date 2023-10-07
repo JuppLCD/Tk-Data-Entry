@@ -7,12 +7,12 @@ from ui.my_widgets import MyTable
 
 
 class StudentTableView(Frame):
-    def __init__(self, userModel: ModelAbstract, **kwargs):
+    def __init__(self, studentModel: ModelAbstract, **kwargs):
         super().__init__(**kwargs)
 
         self.pack()
 
-        self.userModel = userModel
+        self.studentModel = studentModel
 
         table_cols = ("id", "firstname", "lastname", "title", "age", "nationality",
                       "registration_status", "num_courses", "num_semesters")

@@ -8,7 +8,7 @@ from ui.views.student_table import StudentTableView
 
 
 class App:
-    def __init__(self, userModel: ModelAbstract):
+    def __init__(self, studentModel: ModelAbstract):
         self.window = Tk()
         self.window.title("Data Entry Form")
 
@@ -16,7 +16,7 @@ class App:
 
         self.main_frame = Frame(self.window).pack()
 
-        self.userModel = userModel
+        self.studentModel = studentModel
 
         self.current_view = None
         self.menu()
@@ -66,13 +66,13 @@ class App:
         self.clear_current_view()
 
         self.current_view = StudentFormView(
-            master=self.main_frame, userModel=self.userModel)
+            master=self.main_frame, studentModel=self.studentModel)
 
     def students_table_view(self):
         self.clear_current_view()
 
         self.current_view = StudentTableView(
-            master=self.main_frame, userModel=self.userModel)
+            master=self.main_frame, studentModel=self.studentModel)
 
     def clear_current_view(self):
         if self.current_view != None:

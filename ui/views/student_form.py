@@ -4,18 +4,18 @@ from tkinter import messagebox, Frame, LabelFrame, Button
 from models.model_abstract import ModelAbstract
 
 from ui.my_widgets import MyInputText, MyInputNumber, MyInputSelect, MyInputCheckBox
-from utils.entities import User
+from utils.entities import Student
 
 
 class StudentFormView(Frame):
-    def __init__(self, userModel: ModelAbstract, **kwargs):
+    def __init__(self, studentModel: ModelAbstract, **kwargs):
         super().__init__(**kwargs)
 
         self.pack()
 
-        self.userModel = userModel
+        self.studentModel = studentModel
 
-        self.user_info_frame = UserInfoFrame(master=self)
+        self.student_info_frame = StudentInfoFrame(master=self)
         self.courses_frame = CoursesFrame(master=self)
         self.accept_terms_frame = TermsAndConditions(master=self)
 
@@ -34,10 +34,10 @@ class StudentFormView(Frame):
 
             return
 
-        # User info
-        user_info = self.user_info_frame.get_user_info()
-        firstname = user_info["firstname"]
-        lastname = user_info["lastname"]
+        # Student info
+        student_info = self.student_info_frame.get_student_info()
+        firstname = student_info["firstname"]
+        lastname = student_info["lastname"]
 
         if firstname.strip() == "" or lastname.strip() == "":
             messagebox.showwarning(
@@ -48,12 +48,12 @@ class StudentFormView(Frame):
         # Course info
         course_info = self.courses_frame.get_course_info()
 
-        user = User(
+        new_student = Student(
             firstname,
             lastname,
-            title=user_info["title"],
-            age=user_info["age"],
-            nationality=user_info["nationality"],
+            title=student_info["title"],
+            age=student_info["age"],
+            nationality=student_info["nationality"],
             numcourses=course_info["numcourses"],
             numsemesters=course_info["numsemesters"],
             registration_status=course_info["registration_status"]
@@ -61,13 +61,13 @@ class StudentFormView(Frame):
 
         print("The data has been added correctly")
 
-        self.userModel.store(user)
+        self.studentModel.store(new_student)
 
 
-# Saving User Info
-class UserInfoFrame(LabelFrame):
+# Saving Student Info
+class StudentInfoFrame(LabelFrame):
     def __init__(self, **kwargs):
-        super().__init__(text="User Information", **kwargs)
+        super().__init__(text="Student Information", **kwargs)
 
         self.grid(row=0, column=0, padx=20, pady=10)
 
@@ -99,8 +99,8 @@ class UserInfoFrame(LabelFrame):
             )
         )
 
-    def get_user_info(self) -> dict[str, str | int]:
-        user_info = {
+    def get_student_info(self) -> dict[str, str | int]:
+        student_info = {
             "firstname": self.first_name_input.get_input_value(),
             "lastname": self.last_name_input.get_input_value(),
             "title": self.title_select.get_input_value(),
@@ -108,7 +108,7 @@ class UserInfoFrame(LabelFrame):
             "nationality": self.nationality_select.get_input_value(),
         }
 
-        return user_info
+        return student_info
 
 
 # Saving Course Info

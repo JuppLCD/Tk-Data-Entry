@@ -1,9 +1,9 @@
 from app import App
 
-# from models.excel.user import UserModel
-from models.sqlite.user import UserModel
+# from models.excel.student import StudentModel
+from models.sqlite.student import StudentModel
 
 if __name__ == "__main__":
-    userModel = UserModel()
+    studentModel = StudentModel()
 
-    App(userModel=userModel).window.mainloop()
+    App(studentModel=studentModel).window.mainloop()

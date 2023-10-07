@@ -1,16 +1,16 @@
-from utils.entities import User
+from utils.entities import Student
 from models.model_abstract import ModelAbstract
 from models.excel.excel import ExcelModel
 
 
-class UserModel(ModelAbstract, ExcelModel):
+class StudentModel(ModelAbstract, ExcelModel):
     heading = ("First Name", "Last Name", "Title", "Age",
                "Nationality", "# Courses", "# Semesters", "Registration status")
 
     def __init__(self):
-        super().__init__(UserModel.heading, None)
+        super().__init__(StudentModel.heading, None)
 
-    def store(self, data: User):
+    def store(self, data: Student):
         self.apend_data([
             (
                 data.firstname,

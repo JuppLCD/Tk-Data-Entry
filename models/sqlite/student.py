@@ -1,15 +1,15 @@
-from utils.entities import User
+from utils.entities import Student
 from models.sqlite.connection import Connection
 from models.model_abstract import ModelAbstract
 
 
-class UserModel(ModelAbstract, Connection):
+class StudentModel(ModelAbstract, Connection):
     def __init__(self):
         super().__init__()
         self.create_table()
 
     def create_table(self):
-        sql = '''CREATE TABLE IF NOT EXISTS Student_Data (
+        sql = '''CREATE TABLE IF NOT EXISTS student (
             firstname varchar(100) NOT NULL,
             lastname varchar(100) NOT NULL,
             title varchar(5) NOT NULL,
@@ -23,8 +23,8 @@ class UserModel(ModelAbstract, Connection):
 
         self._run_query(sql)
 
-    def store(self, data: User):
-        new_user = (
+    def store(self, data: Student):
+        new_student = (
             data.firstname,
             data.lastname,
             data.title,
@@ -35,6 +35,6 @@ class UserModel(ModelAbstract, Connection):
             data.numsemesters,
         )
         self._run_query(
-            "INSERT INTO Student_Data (firstname, lastname, title, age, nationality, registration_status, num_courses, num_semesters) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            new_user
+            "INSERT INTO student (firstname, lastname, title, age, nationality, registration_status, num_courses, num_semesters) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            new_student
         )
