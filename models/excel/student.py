@@ -2,6 +2,8 @@ from utils.entities import Student
 from models.model_abstract import ModelAbstract
 from models.excel.excel import ExcelModel
 
+# ! TODO: Falta implementar metodos del ModelAbstract
+
 
 class StudentModel(ModelAbstract, ExcelModel):
     heading = ("First Name", "Last Name", "Title", "Age",

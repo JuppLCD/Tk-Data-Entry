@@ -49,13 +49,13 @@ class StudentFormView(Frame):
         course_info = self.courses_frame.get_course_info()
 
         new_student = Student(
-            firstname,
-            lastname,
+            firstname=firstname,
+            lastname=lastname,
             title=student_info["title"],
             age=student_info["age"],
             nationality=student_info["nationality"],
-            numcourses=course_info["numcourses"],
-            numsemesters=course_info["numsemesters"],
+            num_courses=course_info["numcourses"],
+            num_semesters=course_info["numsemesters"],
             registration_status=course_info["registration_status"]
         )
 

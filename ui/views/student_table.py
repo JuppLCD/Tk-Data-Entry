@@ -26,3 +26,7 @@ class StudentTableView(Frame):
                 map(lambda col_text: col_text.upper(), table_cols)),
             cols_width=cols_width
         )
+
+        all_students = self.studentModel.getAll()
+
+        self.student_table.insert_all_items(all_students)

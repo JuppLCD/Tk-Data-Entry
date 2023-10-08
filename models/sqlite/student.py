@@ -10,6 +10,7 @@ class StudentModel(ModelAbstract, Connection):
 
     def create_table(self):
         sql = '''CREATE TABLE IF NOT EXISTS student (
+            id INTEGER,
             firstname varchar(100) NOT NULL,
             lastname varchar(100) NOT NULL,
             title varchar(5) NOT NULL,
@@ -17,7 +18,8 @@ class StudentModel(ModelAbstract, Connection):
             nationality varchar(13),
             registration_status varchar(14),
             num_courses INTEGER,
-            num_semesters INTEGER
+            num_semesters INTEGER,
+            PRIMARY KEY(id AUTOINCREMENT)
             )
         '''
 
@@ -31,10 +33,20 @@ class StudentModel(ModelAbstract, Connection):
             data.age,
             data.nationality,
             data.registration_status,
-            data.numcourses,
-            data.numsemesters,
+            data.num_courses,
+            data.num_semesters,
         )
         self._run_query(
             "INSERT INTO student (firstname, lastname, title, age, nationality, registration_status, num_courses, num_semesters) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             new_student
         )
+
+    def getAll(self) -> list:
+        query = 'SELECT id, firstname, lastname, title, age, nationality, registration_status, num_courses, num_semesters from student'
+        students = self._run_query(query)
+
+        # all_students = []
+        # for student_in_db in students:
+        #     all_students.append(Student.from_tuple(student_in_db))
+
+        return students
