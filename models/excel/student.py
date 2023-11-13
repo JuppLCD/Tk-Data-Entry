@@ -20,8 +20,8 @@ class StudentModel(ModelAbstract, ExcelModel):
                 data.title,
                 data.age,
                 data.nationality,
-                data.numcourses,
-                data.numsemesters,
+                data.num_courses,
+                data.num_semesters,
                 data.registration_status
             )
         ])
